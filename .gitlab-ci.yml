@@ -1,0 +1,41 @@
+image: node:12
+
+cache:
+  paths:
+    - node_modules/
+
+stages:
+  - deps
+  - test
+
+install:
+  stage: deps
+  only:
+    - merge_requests
+  cache:
+    key: ${CI_COMMIT_REF_SLUG}
+    paths:
+      - node_modules/
+  script:
+    - npm ci
+  artifacts:
+    paths:
+      - node_modules/
+
+lint:
+  stage: test
+  only:
+    - merge_requests
+  dependencies:
+    - install
+  script:
+    - npm run lint
+
+test:
+  stage: test
+  only:
+    - merge_requests
+  dependencies:
+    - install
+  script:
+    - npm run test
